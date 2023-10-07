@@ -30,37 +30,57 @@ class Application():
         self._connection.connect()
         self._connection.seed("seeds/music_library.sql")
 
+    def list_artist(self):
+        artist_repository = ArtistRepository(self._connection)
+        all_artists = artist_repository.all()
+        title = "1 - List all artists"
+        print(f"\n------{title.upper()}------\n")
+        for i in all_artists:
+            print(f"{i.id}: {i.name} ({i.genre})")
+            
+    
+    def list_albums(self):
+        album_repository = AlbumRepository(self._connection)
+        all_albums = album_repository.all_with_names()
+        title = "1 - List all albums"
+        print(f"\n------{title.upper()}------\n")
+        for album in all_albums:
+            print(f"{album.id}: {album.title} by {album.artist_id}")
+
+    def list_art_and_al(self):
+        artist_repository = ArtistRepository(self._connection)
+        album_repository = AlbumRepository(self._connection)
+
+        all_artists = artist_repository.all()
+        all_albums = album_repository.all_with_names()
+        title = "3 - List all artists + albums"
+        print(f"\n------{title.upper()}------\n")
+        print(f"\n------Artist------\n")
+        for artist in all_artists:
+            print(f"{artist.id}: {artist.name} ({artist.genre})")
+        
+        print(f"\n------Albums------\n")
+        for album in all_albums:
+            print(f"{album.id}: {album.title} by {album.artist_id}")
+
     def run(self):
-        prompt = f"Welcome to the music library manager!\n\nWhat would you like to do?\n\n1 - List all artists\n2 - List all albums\n3 - List all artists + albums"
+        prompt =(
+            f"Welcome to the music library manager!\n\n"
+            f"What would you like to do?\n\n"
+            f"1 - List all artists\n"
+            f"2 - List all albums\n"
+            f"3 - List all artists + albums")
         print(prompt)
         answer = int(input("Enter your choice:"))
-
+        
         if answer == 1:
-            artist_repository = ArtistRepository(self._connection)
-            all_artists = artist_repository.all()
-            for i in all_artists:
-                print(f"{i.id}: {i.name} ({i.genre})")
+            self.list_artist()
         elif answer == 2:
-            album_repository = AlbumRepository(self._connection)
-            all_albums = album_repository.all()
-            for album in all_albums:
-                print(f"{album.id}: {album.title} ({album.release_year}) by {album.artist_id}")
+            self.list_albums()
         elif answer == 3:
-            artist_repository = ArtistRepository(self._connection)
-            album_repository = AlbumRepository(self._connection)
-
-            all_artists = artist_repository.all()
-            all_albums = album_repository.all()
-
-            print(f"\n------Artist------\n")
-            for artist in all_artists:
-                print(f"{artist.id}: {artist.name} ({artist.genre})")
-            
-            print(f"\n------Albums------\n")
-            for album in all_albums:
-                print(f"{album.id}: {album.title} ({album.release_year}) {album.artist_id}")
-        else:
-            return f"No option has been chosen"
+            self.list_art_and_al()
+        else: 
+            print("Invalid option! Enter 1, 2 or 3")
 
     def add_one_artist(self, new_artist):
             repo = ArtistRepository(self._connection)
@@ -68,15 +88,7 @@ class Application():
 
     def add_one_album(self, new_album):
             repo = AlbumRepository(self._connection)
-            repo.create(new_album)
-    
-    def full_list(self):
-        album_repo = AlbumRepository(self._connection)
-        all_albums = album_repo.all_with_names()
-        for album in all_albums:
-                print(f"{album.id}: {album.title} by {album.artist_id}")
-
-        
+            repo.create(new_album)    
         
 
 if __name__ == '__main__': #run if direct, not importing
@@ -85,5 +97,6 @@ if __name__ == '__main__': #run if direct, not importing
     app.add_one_artist(Artist(None, "SZA", "RnB"))
     app.add_one_album(Album(None, "Happier Than Ever", 2021, 5,))
     app.run()
+    
 
-    app.full_list()
+    # app.full_list()

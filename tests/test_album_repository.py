@@ -24,3 +24,4 @@ def test_delete_album(db_connection):
         Album(1, 'Doolittle', 1989, 1)
     ]
     
+

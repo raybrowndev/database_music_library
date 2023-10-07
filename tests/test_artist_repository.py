@@ -1,5 +1,7 @@
 from lib.artist_repository import ArtistRepository
 from lib.artist import Artist
+from lib.album import Album
+
 
 """
 When we call ArtistRepository#all
@@ -64,3 +66,22 @@ def test_delete_record(db_connection):
         Artist(2, "ABBA", "Pop"),
         Artist(4, "Nina Simone", "Jazz"),
     ]
+
+def test_find_artist_by_album(db_connection):
+    db_connection.seed("seeds/music_library.sql")
+    repo = ArtistRepository(db_connection)
+    result = repo.find_by_album(3)
+    assert result == Artist(3, 'Taylor Swift', 'Pop', [
+        Album(6, 'Lover', 2019, 3),
+        Album(7, 'Folklore', 2020, 3)
+    ])
+
+def test_find_with_albums(db_connection):
+    db_connection.seed("seeds/music_library.sql")
+    repository = ArtistRepository(db_connection)
+    artist = repository.find_by_album(1)
+    assert artist == Artist(1, "Pixies", "Rock", [
+        Album(1, "Doolittle", 1989, 1),
+        Album(2, "Surfer Rosa", 1988, 1),
+        Album(5, "Bossanova", 1990, 1),
+    ])
